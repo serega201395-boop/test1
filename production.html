@@ -1,0 +1,1623 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Виробництво</title>
+    <style>
+
+:root {
+    --bg-main: #f3f4f6;
+    --bg-panel: #ffffff;
+    --bg-header: #f8fafc;
+    --bg-hover: #f1f5f9;
+    --text-main: #1f2937;
+    --text-muted: #64748b;
+    --border-color: #cbd5e1;
+    --border-strong: #94a3b8;
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --status-gray: #e5e7eb;
+    --status-yellow: #fde047;
+    --status-red: #fca5a5;
+    --status-green: #86efac;
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, .06);
+    --menu-active: #1f2937;
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+    margin: 0;
+    background: var(--bg-main);
+    color: var(--text-main);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 13px;
+}
+
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+
+.top-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    min-height: 64px;
+    padding: 0 20px;
+    background: rgba(255,255,255,.96);
+    border-bottom: 2px solid #94a9c7;
+    box-shadow: 0 3px 10px rgba(15,23,42,.14);
+    backdrop-filter: blur(12px);
+}
+.freeze-divider {
+    display:none;
+    position:fixed;
+    top:var(--freeze-top, 64px);
+    left:0;
+    right:0;
+    z-index:29;
+    height:2px;
+    background:#94a9c7;
+    box-shadow:0 1px 4px rgba(15,23,42,.16);
+    pointer-events:none;
+}
+
+.logo { flex: 0 0 auto; font-weight: 800; letter-spacing: .02em; }
+.tabs { position:relative; display:flex; align-self:stretch; min-width:0; overflow-x:auto; scrollbar-width:none; }
+.tabs::-webkit-scrollbar { display:none; }
+.tab-btn { position:relative; flex:0 0 auto; min-height:64px; padding:0 15px; color:#94a3b8; background:transparent; border:0; font-weight:700; white-space:nowrap; transition:color .22s ease,background .22s ease; }
+.tab-btn::after { position:absolute; right:12px; bottom:0; left:12px; height:4px; content:''; background:var(--menu-active); border-radius:999px 999px 0 0; transform:scaleX(0); transition:transform .28s ease; }
+.tab-btn:hover { color:var(--menu-active); background:#f8fafc; }
+.tab-btn.active { color:var(--menu-active); }
+.tab-btn.active::after { transform:scaleX(1); }
+
+.header-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.btn-search { flex:0 0 auto; padding:9px 12px; color:#334155; background:#f1f5f9; border:0; border-radius:10px; font-weight:700; transition:background .2s ease,color .2s ease; }
+.btn-search:hover { color:#1f2937; background:#e2e8f0; }
+.search-input-wrap { display: flex; align-items: center; gap: 4px; }
+.search-input-wrap input { width:150px; min-height:34px; padding:6px 8px; border:1px solid #cbd5e1; border-radius:9px; }
+.search-input-wrap button { border: 0; background: transparent; color: var(--text-muted); font-size: 20px; }
+.btn-add { flex:0 0 auto; margin-left:0; padding:9px 14px; color:#fff; background:#334155; border:0; border-radius:10px; font-weight:700; transition:background .2s ease,transform .2s ease; }
+.btn-add:hover { background:#1e293b; transform:translateY(-1px); }
+
+.search-results { margin-bottom: 12px; padding: 10px; background: #fff; border: 1px solid var(--border-color); border-left: 4px solid #16a34a; border-radius: 5px; }
+.search-results-title { margin-bottom: 8px; font-weight: 800; }
+.search-status-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.search-status-item { padding: 5px 8px; border-radius: 4px; font-size: 12px; font-weight: 700; }
+.search-status-item.status-empty { background: #f1f5f9; color: var(--text-muted); }
+.content {
+    display:flex;
+    flex-direction:row;
+    align-items:flex-start !important;
+    gap:0;
+    min-height:calc(100vh - 64px);
+    height:calc(100vh - 64px);
+    overflow-x:auto;
+    overflow-y:auto;
+    padding:0 20px 20px;
+}
+.content > .stage-card {
+    flex-shrink:0 !important;
+    margin-right:20px;
+    position:relative;
+    isolation:isolate;
+}
+#tab-piskostruy.finishing-card {
+    margin-left:0 !important;
+}
+
+.stage-card {
+    display:flex;
+    flex:0 0 auto;
+    flex-direction:column;
+    align-self:flex-start;
+    min-width:max-content;
+    height:auto;
+    margin:0;
+    padding:0;
+    scroll-margin-top:80px;
+    background:#fff;
+    border:1px solid #dbe2ea;
+    border-radius:10px;
+    box-shadow:0 5px 18px rgba(15,23,42,.07);
+    overflow:visible;
+}
+.tab-content > h2 { display:none; }
+.blue-header {
+    flex:0 0 36px;
+    height:36px;
+    min-height:36px;
+    display:flex;
+    align-items:center;
+    padding:0 12px;
+    color:#fff;
+    background:#2563a8;
+    border-radius:9px 9px 0 0;
+    font-size:14px;
+    font-weight:800;
+    letter-spacing:.02em;
+}
+.stage-card > .data-table,
+.stage-card > .welding-groups {
+    flex:1 1 auto;
+}
+
+.data-table {
+    width: max-content;
+    min-width: 100%;
+    height:auto;
+    width:max-content !important;
+    min-width:100%;
+    table-layout:fixed;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--bg-panel);
+    box-shadow: var(--shadow-sm);
+}
+.data-table thead {
+    height:auto;
+    min-height:0;
+    display:table-header-group;
+    vertical-align:middle !important;
+}
+.data-table thead th {
+    height:40px !important;
+    vertical-align:middle !important;
+    padding:6px;
+}
+.data-table thead tr:only-child th,
+.data-table thead tr:not(:only-child) th,
+.data-table thead tr,
+.data-table thead tr.stage-title {
+    height:40px !important;
+    min-height:40px !important;
+}
+.data-table thead tr.stage-title th {
+    padding:0 12px;
+    color:#fff;
+    background:#2563a8;
+    border-color:#1d4f86;
+    text-align:left;
+    font-size:14px;
+    font-weight:800;
+    letter-spacing:.02em;
+}
+.data-table thead tr.group-spacer th {
+    padding:0;
+    background:#dbeafe;
+    border-color:#b7c9e2;
+}
+.data-table tbody tr {
+    height:36px !important;
+}
+.data-table tbody td {
+    padding:4px 10px !important;
+    height:36px !important;
+    max-height:36px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    vertical-align:middle !important;
+    line-height:1.1;
+}
+.data-table tbody td.order-manager-cell {
+    white-space:nowrap;
+}
+.data-table tbody td.order-manager-cell strong,
+.data-table tbody td.order-manager-cell small {
+    display:inline;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.data-table th,
+.data-table td {
+    height: 30px;
+    user-select: text;
+    padding: 4px 8px;
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.data-table th:first-child,
+.data-table td:first-child { border-left: 1px solid var(--border-color); }
+.row-number { width:40px !important; min-width:40px !important; max-width:40px !important; padding:4px 2px !important; color:#64748b !important; background:#f1f5f9 !important; text-align:center !important; font-variant-numeric:tabular-nums; }
+.data-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    color: #334155;
+    background: var(--bg-header);
+    border-top: 1px solid var(--border-color);
+    font-weight: 700;
+    box-shadow: 0 1px 0 var(--border-strong);
+}
+.data-table thead tr:nth-child(2) th { top:40px; }
+.data-table thead tr:nth-child(3) th { top:80px; }
+.data-table thead tr:nth-child(4) th { top:120px; }
+.data-table thead tr:first-child th { top:0; }
+.content > .stage-card .data-table thead th {
+    position:sticky !important;
+    z-index:20;
+}
+.content > .stage-card .data-table thead tr:nth-child(2) th { top:40px; }
+.content > .stage-card .data-table thead tr:nth-child(3) th { top:80px; }
+.content > .stage-card .data-table thead tr:nth-child(4) th { top:120px; }
+.fixed-header-source thead th,
+.fixed-stage-header-table thead th { position:static !important; top:auto !important; }
+.fixed-stage-header-table {
+    position:fixed !important;
+    display:none;
+    z-index:28;
+    margin:0 !important;
+    table-layout:fixed;
+    pointer-events:none;
+    background:var(--bg-panel);
+    box-shadow:0 2px 8px rgba(15,23,42,.16);
+}
+.data-table tbody tr:hover td { background: var(--bg-hover); }
+.column-resize-handle { position:absolute; top:0; right:-5px; z-index:100; display:block; width:12px; height:100%; cursor:col-resize; user-select:none; pointer-events:auto; touch-action:none; }
+.data-table thead th { position: sticky; }
+.column-resize-handle:hover, .column-resize-handle.active { background: rgba(37, 99, 235, .35); }
+.data-table tbody tr[draggable="true"] { cursor: grab; user-select: text; }
+.data-table tbody td { user-select: text; }
+.data-table tbody tr[draggable="true"]:active td { user-select: text; }
+.data-table tbody tr[draggable="true"]:active { cursor: grabbing; }
+.data-table tbody tr.is-dragging { opacity: .45; }
+.data-table tbody tr.drop-before td { border-top: 3px solid var(--primary); }
+.data-table tbody tr.drop-after td { border-bottom: 3px solid var(--primary); }
+.data-table th:first-child { min-width: 110px; }
+.data-table th:nth-child(2) { min-width: 220px; }
+.data-table td:nth-child(2) { white-space: normal; min-width: 220px; }
+.assembly-table th:first-child, .assembly-table td:first-child { min-width: 170px; }
+.welding-groups { display:grid; grid-template-columns:repeat(5, max-content); align-items:stretch; align-content:stretch; gap:1px; width:max-content; min-width:0; height:100%; border-top:1px solid var(--border-color); border-right:1px solid var(--border-color); }
+.welding-title { grid-column: 1 / -1; width: 100%; padding: 6px 8px; color: #334155; background: #cfe0f7; border-left: 1px solid var(--border-color); font-weight: 700; text-align: center; }
+.welding-group { display:flex; min-width:0; height:100%; }
+.welding-group .welding-table { height:100%; }
+.welding-table { width: 560px; min-width: 560px; table-layout: auto; }
+.welding-table th, .welding-table td { min-width: 0 !important; max-width: none; padding: 6px 7px; white-space: normal; line-height: 1.25; overflow-wrap: anywhere; word-break: normal; text-align: center; overflow: hidden; }
+.welding-table th:first-child, .welding-table td:first-child { width: 112px; min-width: 0 !important; }
+.welding-table th:nth-child(2), .welding-table td:nth-child(2) { width: 145px; min-width: 0 !important; }
+.welding-table th:nth-child(3), .welding-table td:nth-child(3), .welding-table th:nth-child(4), .welding-table td:nth-child(4) { width: 90px; min-width: 0 !important; }
+.welding-table th:last-child, .welding-table td:last-child { width: 90px; min-width: 0 !important; }
+.welding-table th.welding-title { background: #cfe0f7; font-size: 13px; }
+.welding-table th.welding-worker { background: #dbeafe; border-left: 2px solid var(--border-strong); border-right: 2px solid var(--border-strong); white-space: nowrap; }
+.welding-table tr > :nth-child(4n + 1) { border-left: 2px solid var(--border-strong); }
+.welding-table .order-manager-cell { min-width: 0; }
+.welding-table .order-manager-cell strong, .welding-table .order-manager-cell small { overflow-wrap: anywhere; }
+.drag-handle { display: inline-block; margin-right: 5px; color: var(--text-muted); cursor: grab; font-weight: 800; user-select: none; }
+.drag-handle:active { cursor: grabbing; }
+.welding-table tbody tr { height: 52px; }
+.welding-table tbody td { height: 52px; }
+.welding-table tbody .empty-row td { height:52px; vertical-align:middle; }
+.welding-groups { display:block; width:max-content; min-width:0; height:auto; border:0; }
+.welding-sheet { position:relative; display:flex; width:1644px; min-width:1644px; margin-left:0; padding-left:40px; align-items:flex-start; }
+.welding-rail-data { height:36px; display:flex; align-items:center; justify-content:center; color:#64748b; border-bottom:1px solid #cbd5e1; font-size:12px; }
+.welding-body-rail { position:fixed; left:20px; top:0; z-index:32; width:40px; background:#f1f5f9; border-left:1px solid #94a9c7; border-right:1px solid #cbd5e1; }
+.welding-main { flex:0 0 1600px; width:1600px; min-width:1600px; margin-left:-1px; }
+.welding-header-table,
+.welding-full-table { width:1600px !important; min-width:1600px !important; table-layout:fixed; }
+.welding-full-table tbody td { width:5%; min-width:0 !important; height:36px; padding:4px 6px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.welding-full-table tbody .worker-empty { color:#94a3b8; }
+.welding-full-table thead th { height:40px !important; padding:4px 6px; text-align:center; vertical-align:middle; background:#dbeafe; border-color:#94a9c7; }
+.welding-full-table .welding-top-row th { background:#2563a8; color:#fff; font-weight:800; }
+.welding-full-table .welding-section-row th { background:#dbeafe; color:#1e3a5f; font-weight:700; }
+.welding-full-table .welding-worker-row th { background:#c9dcf5; font-weight:700; }
+.welding-full-table .welding-columns-row th { background:#eef5ff; font-weight:700; }
+.welding-header-table th { height:40px !important; padding:4px 6px; text-align:center; vertical-align:middle; background:#dbeafe; border-color:#94a9c7; }
+.welding-header-table .welding-top-row th { background:#2563a8; color:#fff; font-weight:800; }
+.welding-header-table .welding-section-row th { background:#dbeafe; color:#1e3a5f; font-weight:700; }
+.welding-header-table .welding-worker-row th { background:#c9dcf5; font-weight:700; }
+.welding-header-table .welding-columns-row th { background:#eef5ff; font-weight:700; }
+.welding-body-grid { display:grid; grid-template-columns:repeat(4, 400px); width:1600px; min-width:1600px; }
+.welding-body-grid .welding-group { display:block; width:400px; height:auto; min-width:0; }
+.welding-body-grid .welding-body-table { width:400px !important; min-width:400px !important; max-width:none; height:auto; table-layout:fixed; }
+.welding-body-grid .welding-body-table th,
+.welding-body-grid .welding-body-table td { width:20%; min-width:0 !important; padding:4px 6px; text-align:center; white-space:nowrap; }
+.welding-body-grid .welding-body-table tbody tr { height:36px; }
+.welding-body-grid .welding-body-table tbody td { height:36px; }
+.welding-header-table th,
+.welding-body-table td { box-sizing:border-box; }
+.welding-header-table th .column-resize-handle { right:-7px; width:14px; z-index:200; cursor:col-resize; background:transparent; }
+.welding-header-table th .column-resize-handle:hover,
+.welding-header-table th .column-resize-handle.active { background:rgba(37,99,168,.45); }
+.stage-no-status .status-cell { display:none; }
+.stage-no-status .status-placeholder { display:none; }
+.finishing-card {
+    min-width:0;
+    flex:0 0 auto;
+    border-radius:0;
+    border-left:2px solid #94a9c7;
+}
+#tab-piskostruy.finishing-card { width:500px; }
+#tab-pokraska.finishing-card { width:1260px; }
+#tab-svarka.stage-card { flex:0 0 1644px; width:1644px; min-width:1644px; }
+#tab-svarka .welding-groups { width:1644px; min-width:1644px; }
+.finishing-single-table {
+    width:100% !important;
+    min-width:100% !important;
+    table-layout:fixed;
+}
+.finishing-single-table thead th,
+.finishing-single-table tbody td {
+    width:auto;
+    min-width:0 !important;
+}
+.finishing-single-table th:last-child,
+.finishing-single-table td:last-child { min-width:0 !important; }
+.finishing-single-table .group-spacer th { text-align:left; }
+.piskostruy-table thead { height:auto; min-height:0; }
+.piskostruy-table thead th { vertical-align:middle !important; }
+.piskostruy-table thead tr:nth-child(2) th { height:120px !important; background:#eef5ff; }
+.finishing-single-table .finishing-title-row th {
+    height:40px !important;
+    color:#fff;
+    background:#2563a8;
+    border-color:#1d4f86;
+    font-weight:800;
+    text-align:left;
+    white-space:nowrap;
+}
+.finishing-single-table .blue-header { white-space:nowrap; }
+.painting-table { width:1260px !important; min-width:1260px !important; max-width:1260px; table-layout:fixed; }
+.painting-table .paint-title-row th { width:calc(100% - 86px); }
+.painting-table .paint-status-head { width:86px !important; min-width:86px !important; max-width:86px !important; }
+.painting-table thead { height:auto; min-height:0; }
+.painting-table .paint-status-head {
+    background:#c9dcf5 !important;
+    color:#1e3a5f;
+    border:2px solid #1e293b;
+    vertical-align:middle !important;
+}
+.painting-table .paint-info-row th {
+    overflow:hidden;
+    word-break:normal; height:40px !important; color:#1e3a5f; background:#c9dcf5; border-color:#94a9c7; text-align:center; vertical-align:middle; font-weight:700; }
+.painting-table .paint-title-row th {
+    height:40px !important;
+    color:#fff;
+    background:#2563a8;
+    border-color:#1d4f86;
+    text-align:center !important;
+    font-weight:800;
+}
+.blue-header,
+.finishing-single-table .finishing-title-row th,
+.welding-header-table .welding-top-row th,
+.welding-full-table .welding-top-row th,
+.painting-table .paint-title-row th,
+.assembly-fixed-table .assembly-title-row th {
+    height:40px !important;
+    min-height:40px !important;
+    text-align:center !important;
+    justify-content:center;
+}
+.painting-table .paint-info-row th b { color:#dc2626; }
+.painting-table .paint-warning { color:#dc2626; font-weight:800; }
+.painting-table .paint-status-head { color:#1e3a5f; background:#eef5ff; }
+.painting-table .painting-columns-row th { height:50px !important; min-width:0 !important; color:#1e293b; background:#eef5ff; border-color:#94a9c7; text-align:center; vertical-align:middle; font-weight:700; }
+.painting-table .status-cell { display:table-cell; }
+.finishing-board { width:1450px; min-width:1450px; }
+.finishing-header-table { width:1450px !important; min-width:1450px !important; table-layout:fixed; }
+.finishing-header-table th { height:40px !important; padding:5px 8px; text-align:center; vertical-align:middle; }
+.finishing-header-table .finishing-dark-row th { color:#fff; background:#2563a8; border-color:#1d4f86; font-weight:800; }
+.finishing-header-table .finishing-group-row th,
+.finishing-header-table .finishing-empty-row th { color:#1e3a5f; background:#dbeafe; border-color:#b7c9e2; font-weight:700; }
+.finishing-header-table .finishing-columns-row th { color:#1e293b; background:#eef5ff; border-color:#94a9c7; font-weight:700; }
+.finishing-body-grid { display:grid; grid-template-columns:4fr 6fr; width:1450px; min-width:1450px; }
+.finishing-body-table { width:100% !important; min-width:0 !important; table-layout:fixed; }
+.finishing-body-table td { min-width:0 !important; padding:4px 8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.finishing-body-table tbody tr { height:36px; }
+.assembly-table td { min-height:42px; padding-top:7px; padding-bottom:7px; }
+.assembly-card { flex:0 0 980px; width:980px; min-width:980px; }
+.assembly-fixed-table { width:980px !important; min-width:980px !important; table-layout:fixed; }
+.assembly-fixed-table thead th { height:40px !important; padding:6px; text-align:center; vertical-align:middle; }
+.assembly-fixed-table .assembly-title-row th { color:#fff; background:#2563a8; border-color:#1d4f86; font-weight:800; }
+.assembly-fixed-table .assembly-person-row th { color:#1e3a5f; background:#dbeafe; font-weight:700; }
+.assembly-fixed-table .assembly-columns-row th { height:80px !important; color:#1e293b; background:#eef5ff; border-color:#94a9c7; font-weight:700; }
+.assembly-fixed-table thead { height:auto; min-height:0; }
+.assembly-fixed-table tbody td { height:36px; padding:4px 8px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-align:center; }
+.order-manager-cell { white-space: normal !important; line-height: 1.2; }
+.order-manager-cell strong, .order-manager-cell span, .order-manager-cell small { display: block; }
+.order-manager-cell span { margin-top: 2px; color: var(--text-main); font-size: 12px; }
+.order-manager-cell small { margin-top: 3px; color: var(--text-muted); font-size: 11px; font-weight: 600; }
+.bending-table { min-width:1100px; }
+.bending-table th, .bending-table td { min-width:90px; text-align:center; }
+.bending-card { flex:0 0 1100px; width:1100px; min-width:1100px; }
+.bending-reference-table { width:1100px !important; min-width:1100px !important; table-layout:fixed; }
+.bending-reference-table thead { height:auto; min-height:0; }
+.bending-reference-table thead th { height:40px !important; padding:5px 6px; color:#1e3a5f; background:#c9dcf5; border-color:#94a9c7; text-align:center; vertical-align:middle; }
+.bending-reference-table th:first-child,
+.bending-reference-table td:first-child,
+.bending-reference-table th:nth-child(2),
+.bending-reference-table td:nth-child(2) {
+    min-width:0 !important;
+    max-width:none !important;
+}
+.bending-reference-table .bending-title-cell { color:#fff; background:#2563a8; text-align:center; font-weight:800; }
+.bending-reference-table .bending-cut { background:#f3b9e9; }
+.bending-reference-table .bending-independent { background:#b9c3cc; font-size:11px; }
+.bending-reference-table tbody td { height:36px; padding:4px 8px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.bending-table th.group-left, .bending-table th.group-main { background: #dbeafe; line-height: 1.25; }
+.bending-table th.group-left { min-width: 420px; }
+.bending-table th.group-main { min-width: 250px; }
+.bending-table td[contenteditable="true"] { background: #fffdf0; cursor: text; }
+.bending-table td[contenteditable="true"]:focus { outline: 2px solid var(--primary); outline-offset: -2px; background: #fff; }
+.data-table th:last-child, .data-table td:last-child { min-width: 116px; }
+
+.status-cell {
+    min-width: 116px;
+    color: #334155;
+    background: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center !important;
+    user-select: none;
+    transition: filter .12s ease, background .12s ease;
+}
+.status-cell:hover { filter: brightness(.96); }
+.status-cell.status-gray { background: var(--status-gray); }
+.status-cell.status-yellow { background: var(--status-yellow); }
+.status-cell.status-red { background: var(--status-red); }
+.status-cell.status-green { background: var(--status-green); }
+.status-cell:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+
+.empty-row td { padding: 14px; color: var(--text-muted); text-align: center; }
+
+.order-context-menu {
+    position: fixed;
+    z-index: 2000;
+    display: none;
+    min-width: 190px;
+    padding: 4px;
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, .18);
+}
+.order-context-menu.active { display: block; }
+.order-context-menu button {
+    width: 100%;
+    padding: 8px 10px;
+    color: var(--text-main);
+    background: transparent;
+    border: 0;
+    border-radius: 3px;
+    text-align: left;
+    cursor: pointer;
+}
+.order-context-menu button:hover { background: #eff6ff; color: var(--primary); }
+.context-divider { height: 1px; margin: 4px 0; background: var(--border-color); }
+.context-label { padding: 5px 10px 3px; color: var(--text-muted); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.status-option { border-left: 8px solid transparent !important; }
+.status-option-gray { border-left-color: var(--status-gray) !important; }
+.status-option-yellow { border-left-color: var(--status-yellow) !important; }
+.status-option-red { border-left-color: var(--status-red) !important; }
+.status-option-green { border-left-color: var(--status-green) !important; }
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(15, 23, 42, .54);
+}
+.modal-overlay.active { display: flex; }
+.modal-window {
+    width: min(620px, 100%);
+    max-height: 92vh;
+    overflow-y: auto;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 18px 60px rgba(15, 23, 42, .25);
+}
+.modal-header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border-color);
+}
+.modal-header h2 { margin: 0; font-size: 17px; }
+.btn-close { color: var(--text-muted); background: transparent; border: 0; font-size: 24px; line-height: 1; }
+.modal-body { padding: 16px; }
+.form-group { margin-bottom: 10px; }
+.form-group.row { display: flex; gap: 10px; }
+.form-group.row > div { flex: 1; min-width: 0; }
+label { display: block; margin-bottom: 4px; font-size: 12px; font-weight: 600; }
+input[type="text"], input[type="date"], select {
+    width: 100%;
+    min-height: 34px;
+    padding: 6px 8px;
+    color: var(--text-main);
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+input:focus, select:focus { outline: 2px solid rgba(37, 99, 235, .2); border-color: var(--primary); }
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin: 10px 0;
+    padding: 10px;
+    background: var(--bg-header);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+.checkbox-group label { margin: 0; font-weight: 600; }
+.checkbox-group input { margin-right: 5px; accent-color: var(--primary); }
+.dynamic-fields {
+    margin: 10px 0;
+    padding: 10px;
+    background: #fafafa;
+    border: 1px dashed var(--border-strong);
+    border-radius: 4px;
+}
+.dynamic-fields h4 { margin: 0 0 8px; color: var(--primary); }
+.btn-save {
+    width: 100%;
+    margin-top: 8px;
+    padding: 10px 12px;
+    color: #fff;
+    background: #059669;
+    border: 0;
+    border-radius: 4px;
+    font-weight: 700;
+}
+.btn-save:hover { background: #047857; }
+
+@media (max-width: 720px) {
+    .top-header { gap: 8px; padding: 0 8px; }
+    .logo { display: none; }
+    .tab-btn { padding: 0 10px; }
+    .content { gap: 12px; padding: 8px; }
+    .form-group.row { flex-direction: column; gap: 0; }
+}
+
+.content > .stage-card,
+#tab-svarka.stage-card,
+#tab-piskostruy.finishing-card,
+#tab-pokraska.finishing-card,
+.bending-card,
+.assembly-card {
+    min-width:0 !important;
+    width:max-content !important;
+    max-width:none;
+    flex-basis:auto !important;
+}
+#tab-svarka.stage-card {
+    flex:0 0 auto !important;
+    width:max-content !important;
+    min-width:max-content !important;
+    background:transparent;
+    border:0;
+    border-radius:0;
+    box-shadow:none;
+}
+#tab-svarka .welding-groups,
+.welding-sheet,
+.welding-main,
+.welding-full-table,
+.finishing-single-table,
+.painting-table,
+.bending-reference-table,
+.assembly-fixed-table {
+    width:max-content !important;
+    min-width:0 !important;
+    max-width:none;
+}
+
+</style>
+</head>
+<body>
+<header class="top-header">
+    <div class="logo">Завод</div>
+    <nav class="tabs" aria-label="Етапи виробництва">
+        <button class="tab-btn active" data-tab="svarka">Сварка</button>
+        <button class="tab-btn" data-tab="piskostruy">Пескоструй</button>
+        <button class="tab-btn" data-tab="pokraska">Покраска</button>
+        <button class="tab-btn" data-tab="gibka">Гибка</button>
+        <button class="tab-btn" data-tab="sborka">Сборка</button>
+    </nav>
+    <div class="header-actions">
+        <button class="btn-search" id="toggle-search-btn" type="button">⌕ Пошук заявки</button>
+        <div class="search-input-wrap" id="search-input-wrap" hidden>
+            <input id="order-search-input" type="search" inputmode="numeric" placeholder="Номер заявки" aria-label="Пошук заявки">
+            <button id="clear-search-btn" type="button" aria-label="Очистити пошук">×</button>
+        </div>
+        <button class="btn-add" id="open-modal-btn">+ Додати заявку</button>
+    </div>
+</header>
+<div class="freeze-divider" aria-hidden="true"></div>
+
+<main class="content">
+    <section class="search-results" id="search-results" hidden></section>
+    <section id="tab-svarka" class="tab-content stage-card"><div id="welding-groups" class="welding-groups"></div></section>
+    <section id="tab-piskostruy" class="tab-content stage-card finishing-card">
+        <table class="data-table stage-no-status finishing-single-table piskostruy-table">
+            <thead>
+                <tr class="finishing-title-row"><th colspan="4">Ревенко Олександр - піскострум</th></tr>
+                <tr><th rowspan="3">Номер / опис заявки</th><th rowspan="3">Зварювальник</th><th rowspan="3">Термін<br>готовності</th><th rowspan="3">Примітки</th></tr>
+            </thead>
+            <tbody id="tbody-piskostruy"></tbody>
+        </table>
+    </section>
+    <section id="tab-pokraska" class="tab-content stage-card finishing-card painting-card">
+        <table class="data-table finishing-single-table painting-table">
+            <thead>
+                <tr class="paint-title-row"><th colspan="7">Дільниця фарбування №1</th></tr>
+                <tr class="paint-info-row"><th colspan="6">Трегуб Ілля</th><th rowspan="3" class="paint-status-head">Статус</th></tr>
+                <tr class="paint-info-row"><th colspan="2">Дільниця фарбування №1<br>7450мм (+4500мм) x 2420мм (2345мм max)</th><th colspan="4" class="paint-warning">Якщо виріб перевищує довжину <b>7450мм</b>,<br>його максимальна висота може бути до <b>2345мм</b></th></tr>
+                <tr class="painting-columns-row"><th>Номер / опис заявки</th><th>Менеджер /<br>Замовник</th><th>Колір RAL</th><th>Квад-ра</th><th>Термін<br>виконання</th><th>Примітки</th></tr>
+            </thead>
+            <tbody id="tbody-pokraska"></tbody>
+        </table>
+    </section>
+    <section id="tab-gibka" class="tab-content stage-card bending-card"><table class="data-table bending-reference-table stage-no-status"><thead>
+    <tr><th colspan="4" class="bending-title-cell">Гнуття</th><th colspan="3">П-пайп 13 шт/час;<br>Р-ранчо 20 шт/час;<br>Д-дабл 13 шт/час;<br>Б-бокс 20 шт/час;</th><th colspan="3">Накривки:<br>ТИП1 4 шт/час;<br>ТИП2 6 шт/час;<br>ТИП3 3 шт/час;</th></tr>
+    <tr><th class="bending-independent">не залежить<br>від інших дільниць</th><th class="bending-cut">вирізано</th><th rowspan="2">Дата в заявці</th><th rowspan="2">Менеджер /<br>Замовник</th><th rowspan="2">Кількість деталей,<br>шт</th><th rowspan="2">Час виконання,<br>г</th><th rowspan="2">0,65 ЦИНК</th><th rowspan="2">0,5 ЦИНК</th><th colspan="2">Примітки</th></tr>
+    <tr><th>№</th><th>Опис</th><th>Примітки</th><th>Закупівля<br>max довжина =3200 мм</th></tr>
+</thead><tbody id="tbody-gibka"></tbody></table></section>
+    <section id="tab-sborka" class="tab-content stage-card assembly-card"><table class="data-table assembly-table assembly-fixed-table"><thead></thead><tbody id="tbody-sborka"></tbody></table></section>
+</main>
+
+<div class="order-context-menu" id="order-context-menu" role="menu">
+    <button type="button" id="open-order-card-btn">Открыть карточку</button>
+    <div class="context-divider"></div>
+    <div class="context-label">Змінити статус</div>
+    <button type="button" class="status-option status-option-none" data-status="">Без статусу</button>
+    <button type="button" class="status-option status-option-gray" data-status="gray">Готово до роботи</button>
+    <button type="button" class="status-option status-option-yellow" data-status="yellow">В роботі</button>
+    <button type="button" class="status-option status-option-red" data-status="red">Проблема / пауза</button>
+    <button type="button" class="status-option status-option-green" data-status="green">Готова</button>
+</div>
+
+<div class="modal-overlay" id="modal-overlay" aria-hidden="true">
+    <div class="modal-window" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-header">
+            <h2 id="modal-title">Нова заявка</h2>
+            <button class="btn-close" id="close-modal-btn" aria-label="Закрити">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="order-form">
+                <div class="form-group"><label for="input-number">Номер заявки</label><input id="input-number" type="text" required placeholder="Наприклад: 750"></div>
+                <div class="form-group"><label for="input-desc">Опис</label><input id="input-desc" type="text" required placeholder="Наприклад: 1к+1вот"></div>
+                <div class="form-group"><label for="input-manager">Менеджер / Замовник</label><input id="input-manager" type="text" required placeholder="Вкажіть менеджера або замовника"></div>
+                <div class="form-group row"><div><label for="input-date-do">Термін виконання</label><input id="input-date-do" type="date" required></div><div><label for="input-date-got">Термін готовності</label><input id="input-date-got" type="date" required></div></div>
+                <hr>
+                <h3>Оберіть етапи виробництва:</h3>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" id="check-svarka"> Сварка</label>
+                    <label><input type="checkbox" id="check-pokraska"> Покраска</label>
+                    <label><input type="checkbox" id="check-piskostruy"> Пескоструй</label>
+                    <label><input type="checkbox" id="check-gibka"> Гибка</label>
+                    <label><input type="checkbox" id="check-sborka"> Сборка</label>
+                </div>
+                <div class="dynamic-fields" id="fields-svarka" hidden><h4>Дані для Сварки</h4><label for="select-svarshik">Сварщик</label><select id="select-svarshik"></select></div>
+                <div class="dynamic-fields" id="fields-pokraska" hidden><h4>Дані для Покраски</h4><div class="form-group"><label for="input-ral">Колір RAL</label><input id="input-ral"></div><div class="form-group row"><div><label for="input-kvadra">Квадратура</label><input id="input-kvadra"></div><div><label for="input-notes">Примітки</label><input id="input-notes"></div></div></div>
+                <div class="dynamic-fields" id="fields-sborka" hidden><h4>Дані для Сборки</h4><label for="select-sborka">Тип збірки</label><select id="select-sborka"></select></div>
+                <button type="submit" class="btn-save">Зберегти заявку</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="module">
+
+/* Управление заявками производства: единый Store, Renderer и Modal. */
+
+const STORAGE_KEY = 'factory_orders';
+
+const WELDERS = ['Панасенко', 'Ільченко', 'Ревенко', 'Бєгушенко'];
+const WELDER_LABELS = {
+    'Панасенко': 'Панасенко Микола',
+    'Ільченко': 'Ільченко Олександр',
+    'Ревенко': 'Ревенко Сергій',
+    'Бєгушенко': 'Євтушенко Юрій'
+};
+const ASSEMBLY_TYPES = ['Жалосі', 'Штакет', 'Ранчо', 'Пайп', 'Дабл', 'Бокс', 'Інша збірка'];
+const STATUS_STEPS = [
+    { key: '', label: 'Без статусу', className: '' },
+    { key: 'gray', label: 'Готово к работе', className: 'status-gray' },
+    { key: 'yellow', label: 'В работе', className: 'status-yellow' },
+    { key: 'red', label: 'Проблема / пауза', className: 'status-red' },
+    { key: 'green', label: 'Готова', className: 'status-green' }
+];
+
+const escapeHtml = (value) => String(value ?? '')
+    .replaceAll('&', '&amp;').replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+
+class Store {
+    constructor(key) {
+        this.key = key;
+        this.orders = this.load();
+    }
+
+    load() {
+        try {
+            const raw = JSON.parse(localStorage.getItem(this.key) || '[]');
+            return Array.isArray(raw) ? raw.map(order => ({
+                status: '', stageStatuses: {}, manager: order.manager || order.pokraska?.manager || '',
+                positions: {}, ...order
+            })) : [];
+        } catch (error) {
+            console.warn('Не удалось прочитать заявки из localStorage', error);
+            return [];
+        }
+    }
+
+    persist() {
+        localStorage.setItem(this.key, JSON.stringify(this.orders));
+    }
+
+    add(order) {
+        order.positions = {};
+        this.orders.push(order);
+        this.persist();
+    }
+
+    reorder(stage, draggedId, targetId, placeBefore, positionKey = stage) {
+        const rows = this.getByStage(stage, positionKey).map(order => order.id);
+        const from = rows.indexOf(draggedId);
+        if (from === -1) return;
+        rows.splice(from, 1);
+        let target = rows.indexOf(targetId);
+        if (target === -1) return;
+        if (!placeBefore) target += 1;
+        rows.splice(target, 0, draggedId);
+        rows.forEach((id, index) => {
+            const order = this.orders.find(item => item.id === id);
+            if (order) order.positions = { ...(order.positions || {}), [positionKey]: index };
+        });
+        this.persist();
+    }
+
+    updateStageField(orderId, stage, field, value) {
+        const order = this.orders.find(item => item.id === orderId);
+        if (!order) return false;
+        order[stage] = { ...(order[stage] || {}), [field]: value };
+        this.persist();
+        return true;
+    }
+
+    update(orderId, replacement) {
+        const index = this.orders.findIndex(item => item.id === orderId);
+        if (index === -1) return false;
+        this.orders[index] = replacement;
+        this.persist();
+        return true;
+    }
+
+    updateStatus(orderId, status, stage = 'global') {
+        const order = this.orders.find(item => item.id === orderId);
+        if (!order) return false;
+        order.stageStatuses = { ...(order.stageStatuses || {}), [stage]: status };
+        if (stage === 'global') order.status = status;
+        this.persist();
+        return true;
+    }
+
+    getByStage(stage, positionKey = stage) {
+        return this.orders.filter(order => order[stage]).sort((a, b) => {
+            const pa = a.positions?.[positionKey];
+            const pb = b.positions?.[positionKey];
+            if (pa == null && pb == null) return String(a.id).localeCompare(String(b.id));
+            if (pa == null) return 1;
+            if (pb == null) return -1;
+            return pa - pb;
+        });
+    }
+}
+
+class Renderer {
+    constructor(store) {
+        this.store = store;
+        this.welders = WELDERS;
+        this.assemblyTypes = ASSEMBLY_TYPES;
+        this.searchQuery = '';
+        this.searchMode = false;
+        this.configureHeaders();
+        this.populateSelects();
+        this.bindStatusClicks();
+        this.bindRowDragAndDrop();
+        this.bindInlineEditing();
+        this.bindContextMenu();
+        this.bindSearch();
+        const content = document.querySelector('.content');
+        content?.addEventListener('scroll', () => {
+            this.syncWeldingRailPosition();
+            this.syncFixedStageHeaders();
+        }, { passive: true });
+        window.addEventListener('resize', () => {
+            this.syncWeldingRailPosition();
+            this.syncFixedStageHeaders();
+        });
+    }
+
+    populateSelects() {
+        const workerSelect = document.getElementById('select-svarshik');
+        const assemblySelect = document.getElementById('select-sborka');
+        if (workerSelect) workerSelect.innerHTML = this.welders.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
+        if (assemblySelect) assemblySelect.innerHTML = this.assemblyTypes.map(type => `<option value="${escapeHtml(type)}">${escapeHtml(type)}</option>`).join('');
+    }
+
+    configureHeaders() {
+        const assemblyTable = document.querySelector('#tab-sborka .data-table');
+        if (assemblyTable) {
+            assemblyTable.tHead.innerHTML = `
+                <tr class="assembly-title-row"><th colspan="${this.assemblyTypes.length}">Дільниця збірки</th></tr>
+                <tr class="assembly-person-row"><th colspan="${this.assemblyTypes.length}">Козловський Євген</th></tr>
+                <tr class="assembly-columns-row">
+                    ${this.assemblyTypes.map(type => `<th>${type === 'Бокс' ? 'Бокс/ полу бокс' : type}</th>`).join('')}
+                </tr>`;
+        }
+    }
+
+    rowAttrs(stage, order, positionKey = stage) {
+        return `draggable="true" data-stage="${stage}" data-position-key="${positionKey}" data-order-id="${escapeHtml(order.id)}"`;
+    }
+
+    getStageOrders(stage, positionKey = stage) {
+        const rows = this.store.getByStage(stage, positionKey);
+        if (!this.searchMode || !this.searchQuery) return rows;
+        return rows.filter(order => String(order.number || '').toLowerCase().includes(this.searchQuery));
+    }
+
+    statusCell(order, stage = 'global') {
+        const key = order.stageStatuses?.[stage] ?? (stage === 'global' ? order.status : '');
+        const current = STATUS_STEPS.find(status => status.key === key) || STATUS_STEPS[0];
+        return `<td class="status-cell ${current.className}" data-order-id="${escapeHtml(order.id)}" data-status-stage="${stage}" tabindex="0" role="button" title="Клікніть, щоб змінити статус">${current.label}</td>`;
+    }
+
+    renderAll() {
+        this.renderWelding();
+        this.renderPainting();
+        this.renderAssembly();
+        this.renderSimpleStage('piskostruy');
+        this.renderBending();
+        this.renderSearchSummary();
+        this.bindColumnResize();
+        this.syncStageHeaderHeights();
+        this.syncStageWidths();
+        this.syncStickyHeaderOffsets();
+        this.syncWeldingRailRows();
+        this.setupFixedStageHeaders();
+        this.syncUnifiedAnchor();
+        this.syncFixedStageHeaders();
+        this.syncWeldingRailPosition();
+    }
+
+    setupFixedStageHeaders() {
+        document.querySelectorAll('body > .fixed-stage-header-table').forEach(header => header.remove());
+        document.querySelectorAll('.content > .stage-card .data-table:not(.welding-full-table)').forEach((table, index) => {
+            table.classList.add('fixed-header-source');
+            const fixed = document.createElement('table');
+            fixed.className = `${table.className} fixed-stage-header-table`;
+            fixed.dataset.sourceIndex = String(index);
+            const colgroup = table.querySelector('colgroup');
+            if (colgroup) fixed.appendChild(colgroup.cloneNode(true));
+            fixed.appendChild(table.tHead.cloneNode(true));
+            document.body.appendChild(fixed);
+        });
+    }
+
+    syncUnifiedAnchor() {
+        const header = document.querySelector('.top-header');
+        const content = document.querySelector('.content');
+        const stage = content?.querySelector('.stage-card');
+        if (!header || !content || !stage) return;
+        const headerBottom = header.getBoundingClientRect().bottom;
+        const stageTop = stage.getBoundingClientRect().top;
+        content.style.marginTop = `${Math.round(headerBottom - stageTop)}px`;
+        content.style.paddingTop = '0px';
+        document.documentElement.style.setProperty('--freeze-top', `${headerBottom}px`);
+    }
+
+    syncFixedStageHeaders() {
+        const content = document.querySelector('.content');
+        const header = document.querySelector('.top-header');
+        const headerBottom = header?.getBoundingClientRect().bottom || 0;
+        const freezeTop = headerBottom;
+        document.documentElement.style.setProperty('--freeze-top', `${freezeTop}px`);
+        const sources = [...document.querySelectorAll('.content > .stage-card .data-table:not(.welding-full-table)')];
+        document.querySelectorAll('body > .fixed-stage-header-table').forEach(fixed => {
+            const source = sources[Number(fixed.dataset.sourceIndex)];
+            if (!source) return;
+            const rect = source.getBoundingClientRect();
+            const visibleHorizontally = rect.right > 0 && rect.left < window.innerWidth;
+            const shouldShow = Boolean(content && content.scrollTop > 0 && visibleHorizontally);
+            if (!shouldShow) {
+                fixed.style.display = 'none';
+                return;
+            }
+            fixed.style.display = 'table';
+            fixed.style.left = `${rect.left}px`;
+            fixed.style.top = `${freezeTop}px`;
+            const sourceWidth = Math.max(source.scrollWidth, rect.width);
+            fixed.style.width = `${sourceWidth}px`;
+            fixed.style.minWidth = `${sourceWidth}px`;
+            fixed.style.maxWidth = `${sourceWidth}px`;
+        });
+    }
+
+    syncStickyHeaderOffsets() {
+        document.querySelectorAll('.content > .stage-card .data-table').forEach(table => {
+            let offset = 0;
+            [...(table.tHead?.rows || [])].forEach(row => {
+                row.querySelectorAll('th').forEach(cell => { cell.style.top = `${offset}px`; });
+                offset += row.getBoundingClientRect().height;
+            });
+        });
+    }
+
+    syncWeldingRailRows() {
+        const bodyRows = [...document.querySelectorAll('#tab-svarka .welding-full-table tbody tr')];
+        const railRows = [...document.querySelectorAll('body > .welding-body-rail .welding-rail-data')];
+        bodyRows.forEach((row, index) => {
+            const railRow = railRows[index];
+            if (!railRow) return;
+            const height = row.getBoundingClientRect().height;
+            railRow.style.height = height + 'px';
+            railRow.style.minHeight = height + 'px';
+        });
+    }
+
+    syncWeldingRailPosition() {
+        const sheet = document.querySelector('#tab-svarka .welding-sheet');
+        const bodyRail = document.querySelector('body > .welding-body-rail');
+        if (!sheet || !bodyRail) return;
+
+        const rect = sheet.getBoundingClientRect();
+        const header = document.querySelector('.top-header');
+        const headerBottom = header?.getBoundingClientRect().bottom || 0;
+        document.documentElement.style.setProperty('--freeze-top', headerBottom + 'px');
+        const visible = rect.bottom > headerBottom && rect.top < window.innerHeight;
+        const firstBodyRow = sheet.querySelector('.welding-full-table tbody tr');
+        const bodyTop = firstBodyRow?.getBoundingClientRect().top ?? rect.bottom;
+        const headerCells = [...sheet.querySelectorAll('.welding-full-table thead th')];
+        const stickyHeadBottom = headerCells.reduce((bottom, cell) => Math.max(bottom, cell.getBoundingClientRect().bottom), headerBottom);
+        const clipTop = Math.max(0, Math.min(bodyRail.scrollHeight, stickyHeadBottom - bodyTop));
+
+        bodyRail.style.display = visible && Boolean(firstBodyRow) ? 'block' : 'none';
+        bodyRail.style.top = bodyTop + 'px';
+        bodyRail.style.left = '20px';
+        bodyRail.style.clipPath = 'inset(' + clipTop + 'px 0 0 0)';
+    }
+
+    syncStageWidths() {
+        const weldingCard = document.getElementById('tab-svarka');
+        const weldingSheet = weldingCard?.querySelector('.welding-sheet');
+        if (!weldingCard || !weldingSheet) return;
+        const width = Math.ceil(weldingSheet.scrollWidth);
+        weldingCard.style.setProperty('width', `${width}px`, 'important');
+        weldingCard.style.setProperty('min-width', `${width}px`, 'important');
+        weldingCard.style.setProperty('flex-basis', `${width}px`, 'important');
+    }
+
+    syncStageHeaderHeights() {
+        const reference = document.querySelector('#tab-pokraska .painting-table thead');
+        if (!reference) return;
+        const referenceHeight = reference.getBoundingClientRect().height;
+        document.querySelectorAll('.data-table thead').forEach(thead => {
+            if (thead === reference) return;
+            thead.style.height = referenceHeight + 'px';
+            thead.style.minHeight = referenceHeight + 'px';
+        });
+
+        const referenceRows = [...reference.querySelectorAll('tr')];
+        const weldingRows = [...document.querySelectorAll('.welding-full-table thead tr')];
+        referenceRows.forEach((row, index) => {
+            const rowHeight = row.getBoundingClientRect().height;
+            const weldingRow = weldingRows[index];
+            if (weldingRow) {
+                weldingRow.style.height = rowHeight + 'px';
+                weldingRow.style.minHeight = rowHeight + 'px';
+            }
+        });
+    }
+
+    renderBending() {
+        const tbody = document.getElementById('tbody-gibka');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        const fields = ['qty', 'time', 'zinc065', 'zinc05', 'notes', 'procurement'];
+        this.getStageOrders('gibka').forEach((order, index) => {
+            const bending = order.gibka || {};
+            const editable = fields.map(field => `<td contenteditable="true" data-inline-stage="gibka" data-inline-field="${field}" data-order-id="${escapeHtml(order.id)}">${escapeHtml(bending[field])}</td>`).join('');
+            tbody.insertAdjacentHTML('beforeend', `<tr ${this.rowAttrs('gibka', order)}>
+                <td>${escapeHtml(order.number)}</td><td>${escapeHtml(order.desc)}</td><td>${escapeHtml(order.dateDo)}</td><td>${escapeHtml(order.manager)}</td>${editable}${this.statusCell(order, 'gibka')}
+            </tr>`);
+        });
+        this.renderEmpty(tbody, 11);
+    }
+
+    renderSimpleStage(stage) {
+        const tbody = document.getElementById(`tbody-${stage}`);
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        this.getStageOrders(stage).forEach((order, index) => {
+            if (stage === 'piskostruy') {
+                tbody.insertAdjacentHTML('beforeend', `<tr ${this.rowAttrs(stage, order)}>
+                    <td>${escapeHtml(order.number)} / ${escapeHtml(order.desc)}</td><td>${escapeHtml(order.manager)}</td><td>${escapeHtml(order.dateGot)}</td><td>${escapeHtml(order.dateDo)}</td>${this.statusCell(order, stage)}
+                </tr>`);
+                return;
+            }
+            tbody.insertAdjacentHTML('beforeend', `<tr ${this.rowAttrs(stage, order)}>
+                <td class="row-number">${index + 1}</td><td>${escapeHtml(order.number)}</td><td>${escapeHtml(order.manager)}</td><td>${escapeHtml(order.desc)}</td>
+                <td>${escapeHtml(order.dateDo)}</td><td>${escapeHtml(order.dateGot)}</td>${this.statusCell(order, stage)}
+            </tr>`);
+        });
+        this.renderEmpty(tbody, stage === 'piskostruy' ? 5 : 7);
+    }
+
+    renderWelding() {
+        const container = document.getElementById('welding-groups');
+        if (!container) return;
+        const workerHeaders = this.welders.map(worker => `<th colspan="5">${escapeHtml(WELDER_LABELS[worker] || worker)}</th>`).join('');
+        const columnHeaders = this.welders.map(() => '<th>№<br>заявки</th><th>Опис продукції</th><th>Термін<br>готовності</th><th>Термін<br>виконання</th><th>Статус</th>').join('');
+        const rowsByWorker = this.welders.map(worker => this.getStageOrders('svarka', `svarka:${worker}`).filter(order => order.svarka.svarshik === worker));
+        const maxRows = Math.max(1, ...rowsByWorker.map(rows => rows.length));
+        const numberRows = Array.from({ length: maxRows }, (_, index) => `<div class="welding-rail-data">${index + 1}</div>`).join('');
+        const bodyRows = Array.from({ length: maxRows }, (_, rowIndex) => {
+            const firstOrder = rowsByWorker.find(rows => rows[rowIndex])?.[rowIndex];
+            const attrs = firstOrder ? this.rowAttrs('svarka', firstOrder, `svarka:${firstOrder.svarka?.svarshik || ''}`) : '';
+            const cells = rowsByWorker.map(rows => {
+                const order = rows[rowIndex];
+                if (!order) return '<td class="worker-empty">Заявок немає</td><td class="worker-empty"></td><td class="worker-empty"></td><td class="worker-empty"></td><td class="worker-empty"></td>';
+                return `<td>${escapeHtml(order.number)}</td><td>${escapeHtml(order.desc)}</td><td>${escapeHtml(order.dateGot)}</td><td>${escapeHtml(order.dateDo)}</td>${this.statusCell(order, 'svarka')}`;
+            }).join('');
+            return `<tr ${attrs}>${cells}</tr>`;
+        }).join('');
+        document.querySelectorAll('body > .welding-body-rail').forEach(rail => rail.remove());
+        container.innerHTML = `<div class="welding-sheet"><div class="welding-body-rail">${numberRows}</div><div class="welding-main"><table class="data-table welding-full-table"><thead>
+            <tr class="welding-top-row"><th colspan="20">Зварювальна дільниця</th></tr>
+            <tr class="welding-section-row"><th colspan="20">Панасенко Микола</th></tr>
+            <tr class="welding-worker-row">${workerHeaders}</tr>
+            <tr class="welding-columns-row">${columnHeaders}</tr>
+        </thead><tbody>${bodyRows}</tbody></table></div></div>`;
+        const bodyRail = container.querySelector('.welding-body-rail');
+        if (bodyRail) document.body.appendChild(bodyRail);
+    }
+
+    renderPainting() {
+        const tbody = document.getElementById('tbody-pokraska');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        this.getStageOrders('pokraska').forEach((order, index) => {
+            const paint = order.pokraska;
+            tbody.insertAdjacentHTML('beforeend', `<tr ${this.rowAttrs('pokraska', order)}>
+                <td>${escapeHtml(order.number)} / ${escapeHtml(order.desc)}</td><td>${escapeHtml(order.manager)}</td>
+                <td>${escapeHtml(paint.ral)}</td><td>${escapeHtml(paint.kvadra)}</td><td>${escapeHtml(order.dateDo)}</td>
+                <td>${escapeHtml(paint.notes)}</td>${this.statusCell(order, 'pokraska')}
+            </tr>`);
+        });
+        this.renderEmpty(tbody, 8);
+    }
+
+    renderAssembly() {
+        const tbody = document.getElementById('tbody-sborka');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        this.getStageOrders('sborka').forEach((order, index) => {
+            const type = order.sborka.type;
+            const cells = this.assemblyTypes.map(item => `<td>${item === type ? `<strong>${escapeHtml(order.number)}</strong><br>${escapeHtml(order.desc)}` : ''}</td>`).join('');
+            tbody.insertAdjacentHTML('beforeend', `<tr ${this.rowAttrs('sborka', order)}>${cells}</tr>`);
+        });
+        this.renderEmpty(tbody, this.assemblyTypes.length);
+    }
+
+    renderEmpty(tbody, colspan) {
+        if (!tbody.children.length) {
+            tbody.innerHTML = `<tr class="empty-row"><td colspan="${colspan}">Заявок пока нет</td></tr>`;
+        }
+    }
+
+    bindRowDragAndDrop() {
+        let dragged = null;
+        document.addEventListener('dragstart', event => {
+            const row = event.target.closest('.data-table tbody tr[draggable="true"]');
+            if (!row) return;
+            if (window.getSelection && window.getSelection().toString()) {
+                event.preventDefault();
+                return;
+            }
+            dragged = row;
+            row.classList.add('is-dragging');
+            event.dataTransfer.effectAllowed = 'move';
+            event.dataTransfer.setData('text/plain', row.dataset.orderId);
+        });
+        document.addEventListener('dragend', () => {
+            dragged?.classList.remove('is-dragging');
+            dragged = null;
+            document.querySelectorAll('.drop-before, .drop-after').forEach(row => row.classList.remove('drop-before', 'drop-after'));
+        });
+        document.addEventListener('dragover', event => {
+            const target = event.target.closest('.data-table tbody tr[draggable="true"]');
+            if (!dragged || !target || target === dragged || target.dataset.stage !== dragged.dataset.stage || target.dataset.positionKey !== dragged.dataset.positionKey) return;
+            event.preventDefault();
+            document.querySelectorAll('.drop-before, .drop-after').forEach(row => row.classList.remove('drop-before', 'drop-after'));
+            target.classList.add(event.clientY < target.getBoundingClientRect().top + target.offsetHeight / 2 ? 'drop-before' : 'drop-after');
+        });
+        document.addEventListener('drop', event => {
+            const target = event.target.closest('.data-table tbody tr[draggable="true"]');
+            if (!dragged || !target || target === dragged || target.dataset.stage !== dragged.dataset.stage || target.dataset.positionKey !== dragged.dataset.positionKey) return;
+            event.preventDefault();
+            const before = event.clientY < target.getBoundingClientRect().top + target.offsetHeight / 2;
+            this.store.reorder(dragged.dataset.stage, dragged.dataset.orderId, target.dataset.orderId, before, dragged.dataset.positionKey);
+            this.renderAll();
+        });
+    }
+
+    bindContextMenu() {
+        const menu = document.getElementById('order-context-menu');
+        const openButton = document.getElementById('open-order-card-btn');
+        const statusButtons = menu.querySelectorAll('.status-option');
+        let selectedOrderId = null;
+        let selectedStage = 'global';
+        document.addEventListener('contextmenu', event => {
+            const row = event.target.closest('.data-table tbody tr[data-order-id]');
+            if (!row || row.classList.contains('empty-row')) return;
+            event.preventDefault();
+            selectedOrderId = row.dataset.orderId;
+            selectedStage = row.dataset.stage || 'global';
+            menu.style.left = `${Math.min(event.clientX, window.innerWidth - 205)}px`;
+            menu.style.top = `${Math.min(event.clientY, window.innerHeight - 48)}px`;
+            menu.classList.add('active');
+        });
+        openButton?.addEventListener('click', () => {
+            menu.classList.remove('active');
+            const order = this.store.orders.find(item => item.id === selectedOrderId);
+            if (order && this.onOpenOrder) this.onOpenOrder(order);
+        });
+        statusButtons.forEach(button => button.addEventListener('click', () => {
+            if (!selectedOrderId) return;
+            this.store.updateStatus(selectedOrderId, button.dataset.status || '', selectedStage);
+            menu.classList.remove('active');
+            this.renderAll();
+        }));
+        document.addEventListener('click', event => {
+            if (!event.target.closest('#order-context-menu')) menu?.classList.remove('active');
+        });
+    }
+
+    bindColumnResize() {
+        const saved = JSON.parse(localStorage.getItem('factory_column_widths') || '{}');
+        document.querySelectorAll('.data-table').forEach((table, tableIndex) => {
+            const key = table.closest('.welding-group')?.dataset.worker || table.closest('.tab-content')?.id || `table-${tableIndex}`;
+            table.dataset.resizeKey = key;
+            const headerCells = this.getLeafHeaderCells(table);
+            if (!headerCells.length) return;
+            this.ensureColumnGroup(table);
+            headerCells.forEach((th, index) => {
+                if (th.colSpan > 1 || th.dataset.resizeReady) return;
+                th.dataset.resizeReady = 'true';
+                const width = saved[key]?.[index];
+                if (width) this.applyColumnWidth(table, index, width);
+                const handle = document.createElement('span');
+                handle.className = 'column-resize-handle';
+                th.appendChild(handle);
+                handle.addEventListener('dblclick', event => {
+                    event.preventDefault();
+                    const cells = [...table.querySelectorAll(`tbody tr:not(.empty-row) > td:nth-child(${index + 1})`), th];
+                    const fitWidth = Math.max(56, Math.min(480, Math.max(...cells.map(cell => cell.scrollWidth + 14), 56)));
+                    this.applyColumnWidth(table, index, fitWidth);
+                    const current = JSON.parse(localStorage.getItem('factory_column_widths') || '{}');
+                    current[key] = current[key] || {};
+                    current[key][index] = fitWidth;
+                    localStorage.setItem('factory_column_widths', JSON.stringify(current));
+                });
+                handle.addEventListener('pointerdown', event => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    table.style.tableLayout = 'fixed';
+                    handle.setPointerCapture?.(event.pointerId);
+                    handle.classList.add('active');
+                    const startX = event.clientX;
+                    const startWidth = th.getBoundingClientRect().width;
+                    const startTableWidth = table.getBoundingClientRect().width;
+                    const move = moveEvent => {
+                        const nextWidth = Math.max(56, Math.round(startWidth + moveEvent.clientX - startX));
+                        this.applyColumnWidth(table, index, nextWidth, startTableWidth + (nextWidth - startWidth));
+                    };
+                    const stop = () => {
+                        handle.classList.remove('active');
+                        document.removeEventListener('pointermove', move);
+                        document.removeEventListener('pointerup', stop);
+                        const current = JSON.parse(localStorage.getItem('factory_column_widths') || '{}');
+                        current[key] = current[key] || {};
+                        current[key][index] = th.getBoundingClientRect().width;
+                        localStorage.setItem('factory_column_widths', JSON.stringify(current));
+                    };
+                    document.addEventListener('pointermove', move);
+                    document.addEventListener('pointerup', stop, { once: true });
+                });
+            });
+            const statusTh = table.classList.contains('painting-table') ? table.tHead.querySelector('th.paint-status-head') : null;
+            if (statusTh && !statusTh.dataset.resizeReady) {
+                statusTh.dataset.resizeReady = 'true';
+                const statusIndex = Math.max(0, (table.tBodies[0]?.rows[0]?.cells.length || 1) - 1);
+                const statusHandle = document.createElement('span');
+                statusHandle.className = 'column-resize-handle';
+                statusTh.appendChild(statusHandle);
+                statusHandle.addEventListener('dblclick', event => {
+                    event.preventDefault();
+                    const fitWidth = Math.max(56, Math.min(480, Math.max(...[...table.querySelectorAll('tbody tr:not(.empty-row) > td:last-child'), statusTh].map(cell => cell.scrollWidth + 14), 56)));
+                    this.applyColumnWidth(table, statusIndex, fitWidth);
+                });
+                statusHandle.addEventListener('pointerdown', event => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    table.style.tableLayout = 'fixed';
+                    statusHandle.setPointerCapture?.(event.pointerId);
+                    statusHandle.classList.add('active');
+                    const startX = event.clientX;
+                    const startWidth = statusTh.getBoundingClientRect().width;
+                    const startTableWidth = table.getBoundingClientRect().width;
+                    const move = moveEvent => {
+                        const nextWidth = Math.max(56, Math.round(startWidth + moveEvent.clientX - startX));
+                        this.applyColumnWidth(table, statusIndex, nextWidth, startTableWidth + (nextWidth - startWidth));
+                    };
+                    const stop = () => {
+                        statusHandle.classList.remove('active');
+                        document.removeEventListener('pointermove', move);
+                        const current = JSON.parse(localStorage.getItem('factory_column_widths') || '{}');
+                        current[key] = current[key] || {};
+                        current[key][statusIndex] = statusTh.getBoundingClientRect().width;
+                        localStorage.setItem('factory_column_widths', JSON.stringify(current));
+                    };
+                    document.addEventListener('pointermove', move);
+                    document.addEventListener('pointerup', stop, { once: true });
+                });
+            }
+        });
+    }
+
+    getLeafHeaderCells(table) {
+        const rows = [...(table.tHead?.rows || [])];
+        const occupied = [];
+        const leaves = [];
+        rows.forEach((row, rowIndex) => {
+            occupied[rowIndex] ||= [];
+            let column = 0;
+            [...row.cells].forEach(cell => {
+                while (occupied[rowIndex][column]) column += 1;
+                const colSpan = cell.colSpan || 1;
+                const rowSpan = cell.rowSpan || 1;
+                for (let r = rowIndex; r < rowIndex + rowSpan; r += 1) {
+                    occupied[r] ||= [];
+                    for (let c = column; c < column + colSpan; c += 1) occupied[r][c] = true;
+                }
+                if (colSpan === 1) leaves[column] = cell;
+                column += colSpan;
+            });
+        });
+        return leaves.filter(Boolean);
+    }
+
+    defaultColumnWidth(table, index, cell) {
+        const local = table.classList.contains('welding-full-table') ? index % 5 : index;
+        if (table.classList.contains('welding-full-table')) return [56, 120, 82, 82, 68][local] || 68;
+        if (table.classList.contains('painting-table')) return [170, 150, 100, 90, 130, 130, 86][index] || 80;
+        if (table.classList.contains('piskostruy-table')) return [150, 140, 120, 140][index] || 80;
+        if (table.classList.contains('assembly-fixed-table')) return 120;
+        if (table.classList.contains('bending-reference-table')) return [70, 80, 110, 140, 110, 100, 100, 100, 100, 145][index] || 80;
+        return Math.max(56, Math.min(240, cell?.scrollWidth + 16 || 80));
+    }
+
+    ensureColumnGroup(table) {
+        if (table.querySelector('colgroup')) return;
+        const headerCells = this.getLeafHeaderCells(table);
+        const group = document.createElement('colgroup');
+        headerCells.forEach((cell, index) => {
+            const col = document.createElement('col');
+            col.style.width = `${this.defaultColumnWidth(table, index, cell)}px`;
+            group.appendChild(col);
+        });
+        table.insertBefore(group, table.tHead);
+    }
+
+    applyColumnWidth(table, index, width, tableWidth = null) {
+        width = Math.max(56, Number(width) || 56);
+        const col = table.querySelector(`colgroup col:nth-child(${index + 1})`);
+        if (col) col.style.width = `${width}px`;
+        const headerCells = this.getLeafHeaderCells(table);
+        const th = headerCells[index];
+        if (th) { th.style.width = `${width}px`; th.style.minWidth = '0'; th.style.maxWidth = `${width}px`; }
+        table.style.tableLayout = 'fixed';
+        const columns = [...table.querySelectorAll('colgroup col')];
+        const totalWidth = columns.reduce((sum, column) => sum + (parseFloat(column.style.width) || column.getBoundingClientRect().width || 0), 0);
+        table.style.width = `${Math.max(120, totalWidth)}px`;
+        table.style.minWidth = `${Math.max(120, totalWidth)}px`;
+        table.querySelectorAll(`tbody tr > td:nth-child(${index + 1})`).forEach(cell => {
+            cell.style.width = `${width}px`;
+            cell.style.minWidth = '0';
+            cell.style.maxWidth = `${width}px`;
+        });
+        if (table.classList.contains('welding-header-table') || table.classList.contains('welding-full-table')) {
+            const weldingCard = document.getElementById('tab-svarka');
+            const currentTableWidth = Math.max(120, table.getBoundingClientRect().width || 120);
+            if (weldingCard) {
+                const cardWidth = Math.ceil(currentTableWidth + 44);
+                weldingCard.style.setProperty('width', `${cardWidth}px`, 'important');
+                weldingCard.style.setProperty('min-width', `${cardWidth}px`, 'important');
+                weldingCard.style.setProperty('flex-basis', `${cardWidth}px`, 'important');
+            }
+            const bodyTables = table.parentElement?.querySelectorAll('.welding-body-table') || [];
+            const groupIndex = Math.floor(index / 5);
+            const localIndex = index % 5;
+            const bodyTable = bodyTables[groupIndex];
+            if (bodyTable) {
+                this.applyColumnWidth(bodyTable, localIndex, width);
+                bodyTable.style.width = `${Math.max(120, bodyTable.querySelector('colgroup')?.getBoundingClientRect().width || bodyTable.getBoundingClientRect().width)}px`;
+            }
+            const headerCols = [...table.querySelectorAll('colgroup col')];
+            const groupWidths = bodyTables.length
+                ? bodyTables.map((_, group) => headerCols.slice(group * 5, group * 5 + 5).reduce((sum, col) => sum + (parseFloat(col.style.width) || col.getBoundingClientRect().width || 0), 0))
+                : [];
+            if (groupWidths.length) {
+                const grid = table.parentElement?.querySelector('.welding-body-grid');
+                if (grid) grid.style.gridTemplateColumns = groupWidths.map(value => `${Math.max(120, value)}px`).join(' ');
+                bodyTables.forEach((body, group) => {
+                    const wrapper = body.parentElement;
+                    if (wrapper) wrapper.style.width = `${Math.max(120, groupWidths[group])}px`;
+                });
+            }
+        }
+        const isWeldingTable = table.classList.contains('welding-header-table') || table.classList.contains('welding-full-table');
+        if (!isWeldingTable) {
+            const resizeCard = table.closest('.stage-card');
+            const cardWidth = Math.ceil(table.getBoundingClientRect().width || 0);
+            if (resizeCard && cardWidth > 0) {
+                resizeCard.style.width = `${cardWidth}px`;
+                resizeCard.style.minWidth = `${cardWidth}px`;
+                resizeCard.style.flexBasis = `${cardWidth}px`;
+            }
+        }
+    }
+
+    bindSearch() {
+        const toggle = document.getElementById('toggle-search-btn');
+        const wrap = document.getElementById('search-input-wrap');
+        const input = document.getElementById('order-search-input');
+        const clear = document.getElementById('clear-search-btn');
+        toggle?.addEventListener('click', () => {
+            wrap.hidden = !wrap.hidden;
+            if (!wrap.hidden) input?.focus();
+            else { this.searchQuery = ''; this.searchMode = false; document.body.classList.remove('search-mode'); if (input) input.value = ''; this.renderAll(); }
+        });
+        input?.addEventListener('input', () => {
+            this.searchQuery = input.value.trim().toLowerCase();
+            this.searchMode = Boolean(this.searchQuery);
+            document.body.classList.toggle('search-mode', this.searchMode);
+            this.renderAll();
+        });
+        clear?.addEventListener('click', () => {
+            input.value = ''; this.searchQuery = ''; this.searchMode = false; document.body.classList.remove('search-mode'); input.focus(); this.renderAll();
+        });
+    }
+
+    renderSearchSummary() {
+        const panel = document.getElementById('search-results');
+        if (!panel) return;
+        document.body.classList.toggle('search-mode', this.searchMode && Boolean(this.searchQuery));
+        if (!this.searchQuery) { panel.hidden = true; panel.innerHTML = ''; return; }
+        const order = this.store.orders.find(item => String(item.number || '').toLowerCase().includes(this.searchQuery));
+        if (!order) { panel.hidden = false; panel.innerHTML = '<div class="search-results-title">Заявку не знайдено</div>'; return; }
+        const stages = [['svarka', 'Сварка'], ['pokraska', 'Покраска'], ['piskostruy', 'Пескоструй'], ['gibka', 'Гибка'], ['sborka', 'Сборка']];
+        const items = stages.filter(([key]) => order[key]).map(([key, label]) => {
+            const status = STATUS_STEPS.find(item => item.key === (order.stageStatuses?.[key] || '')) || STATUS_STEPS[0];
+            return `<span class="search-status-item ${status.className || 'status-empty'}">${label}: ${status.label}</span>`;
+        }).join('');
+        panel.hidden = false;
+        panel.innerHTML = `<div class="search-results-title">Заявка ${escapeHtml(order.number)} · ${escapeHtml(order.desc)}</div><div class="search-status-list">${items}</div>`;
+    }
+
+    bindInlineEditing() {
+        document.addEventListener('blur', event => {
+            const cell = event.target.closest('[data-inline-stage]');
+            if (!cell) return;
+            this.store.updateStageField(cell.dataset.orderId, cell.dataset.inlineStage, cell.dataset.inlineField, cell.textContent.trim());
+        }, true);
+    }
+
+    bindStatusClicks() {
+        const handle = (event) => {
+            const cell = event.target.closest('.status-cell');
+            if (!cell) return;
+            const order = this.store.orders.find(item => item.id === cell.dataset.orderId);
+            if (!order) return;
+            const stage = cell.dataset.statusStage || 'global';
+            const currentKey = order.stageStatuses?.[stage] ?? (stage === 'global' ? order.status : '');
+            const index = STATUS_STEPS.findIndex(item => item.key === currentKey);
+            const next = STATUS_STEPS[(index + 1) % STATUS_STEPS.length];
+            this.store.updateStatus(order.id, next.key, stage);
+            this.renderAll();
+        };
+        document.addEventListener('click', handle);
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') handle(event);
+        });
+    }
+}
+
+class Modal {
+    constructor(store, renderer) {
+        this.store = store;
+        this.renderer = renderer;
+        this.overlay = document.getElementById('modal-overlay');
+        this.form = document.getElementById('order-form');
+        this.editingId = null;
+        this.checkboxes = [
+            ['check-svarka', 'fields-svarka'], ['check-pokraska', 'fields-pokraska'],
+            ['check-piskostruy', null], ['check-gibka', null], ['check-sborka', 'fields-sborka']
+        ];
+        this.bind();
+    }
+
+    bind() {
+        document.getElementById('open-modal-btn')?.addEventListener('click', () => this.open());
+        document.getElementById('close-modal-btn')?.addEventListener('click', () => this.close());
+        this.overlay?.addEventListener('click', event => { if (event.target === this.overlay) this.close(); });
+        document.addEventListener('keydown', event => { if (event.key === 'Escape') this.close(); });
+        this.checkboxes.forEach(([checkId, fieldId]) => {
+            const checkbox = document.getElementById(checkId);
+            checkbox?.addEventListener('change', () => {
+                if (fieldId) document.getElementById(fieldId).hidden = !checkbox.checked;
+            });
+        });
+        this.form?.addEventListener('submit', event => this.submit(event));
+    }
+
+    open() {
+        this.editingId = null;
+        this.form?.reset();
+        this.setDynamicFields();
+        document.getElementById('modal-title').textContent = 'Нова заявка';
+        this.overlay?.classList.add('active');
+    }
+
+    openEdit(order) {
+        this.editingId = order.id;
+        document.getElementById('modal-title').textContent = 'Редагувати заявку';
+        const set = (id, value) => { const input = document.getElementById(id); if (input) input.value = value || ''; };
+        set('input-number', order.number); set('input-desc', order.desc); set('input-manager', order.manager);
+        set('input-date-do', order.dateDo); set('input-date-got', order.dateGot);
+        const stages = ['svarka', 'pokraska', 'piskostruy', 'gibka', 'sborka'];
+        stages.forEach(stage => { const checkbox = document.getElementById(`check-${stage}`); if (checkbox) checkbox.checked = Boolean(order[stage]); });
+        set('select-svarshik', order.svarka?.svarshik); set('input-ral', order.pokraska?.ral); set('input-kvadra', order.pokraska?.kvadra); set('input-notes', order.pokraska?.notes); set('select-sborka', order.sborka?.type);
+        this.setDynamicFields();
+        this.overlay?.classList.add('active');
+    }
+
+    setDynamicFields() {
+        this.checkboxes.forEach(([checkId, fieldId]) => { if (fieldId) document.getElementById(fieldId).hidden = !this.checked(checkId); });
+    }
+
+    close() { this.overlay?.classList.remove('active'); }
+
+    value(id) { return document.getElementById(id)?.value.trim() || ''; }
+    checked(id) { return Boolean(document.getElementById(id)?.checked); }
+
+    submit(event) {
+        event.preventDefault();
+        const selectedStages = ['check-svarka', 'check-pokraska', 'check-piskostruy', 'check-gibka', 'check-sborka'].filter(id => this.checked(id));
+        if (!selectedStages.length) {
+            alert('Оберіть хоча б один етап виробництва.');
+            return;
+        }
+
+        const order = {
+            id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            number: this.value('input-number'), desc: this.value('input-desc'), manager: this.value('input-manager'),
+            dateDo: this.value('input-date-do'), dateGot: this.value('input-date-got'), status: '', stageStatuses: {},
+            svarka: this.checked('check-svarka') ? { svarshik: this.value('select-svarshik') } : null,
+            pokraska: this.checked('check-pokraska') ? {
+                ral: this.value('input-ral'),
+                kvadra: this.value('input-kvadra'), notes: this.value('input-notes')
+            } : null,
+            sborka: this.checked('check-sborka') ? { type: this.value('select-sborka') } : null,
+            piskostruy: this.checked('check-piskostruy') ? {} : null,
+            gibka: this.checked('check-gibka') ? {} : null
+        };
+
+        if (this.editingId) {
+            const previous = this.store.orders.find(item => item.id === this.editingId);
+            this.store.update(this.editingId, { ...order, id: this.editingId, status: previous?.status || '', stageStatuses: previous?.stageStatuses || {}, positions: previous?.positions || {} });
+        } else {
+            this.store.add(order);
+        }
+        this.form.reset();
+        this.checkboxes.forEach(([, fieldId]) => { if (fieldId) document.getElementById(fieldId).hidden = true; });
+        this.close();
+        this.renderer.renderAll();
+    }
+}
+
+function initSectionOrder() {
+    const main = document.querySelector('main.content');
+    if (!main) return;
+    ['svarka', 'piskostruy', 'pokraska', 'gibka', 'sborka'].forEach(stage => {
+        const section = document.getElementById(`tab-${stage}`);
+        if (section && section.tagName === 'SECTION') main.appendChild(section);
+    });
+    const welding = document.getElementById('tab-svarka');
+    if (welding) main.prepend(welding);
+}
+
+function initTabs() {
+    const buttons = [...document.querySelectorAll('.tab-btn')];
+    const sections = buttons.map(button => document.getElementById(`tab-${button.dataset.tab}`)).filter(Boolean);
+    const setActive = id => buttons.forEach(button => button.classList.toggle('active', button.dataset.tab === id));
+    buttons.forEach(button => button.addEventListener('click', () => {
+        const section = document.getElementById(`tab-${button.dataset.tab}`);
+        if (!section) return;
+        setActive(button.dataset.tab);
+        section.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' });
+    }));
+    const observer = new IntersectionObserver(entries => {
+        const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]) setActive(visible[0].target.id.replace('tab-', ''));
+    }, { root: null, rootMargin: '-80px 0px -55% 0px', threshold: [0.05, 0.25, 0.5] });
+    sections.forEach(section => observer.observe(section));
+}
+
+function seedTestWeldingOrders() {
+    const TEST_PREFIX = 'test-svarka-';
+    let orders = [];
+    try { orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch (error) { orders = []; }
+    const existingTestOrders = orders.filter(order => String(order.id || '').startsWith(TEST_PREFIX));
+    if (existingTestOrders.length) {
+        existingTestOrders.forEach(order => { order.svarka = { ...(order.svarka || {}), svarshik: WELDERS[0] }; });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+        return;
+    }
+    const managers = ['Олена', 'Андрій', 'Марія', 'Ігор', 'Наталія'];
+    const descriptions = ['Каркас', 'Секція огорожі', 'Ворота', 'Навіс', 'Рама', 'Стійки', 'Панель'];
+    const today = new Date();
+    const testOrders = Array.from({ length: 50 }, (_, index) => {
+        const day = String((today.getDate() + index) % 28 + 1).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        return {
+            id: `${TEST_PREFIX}${String(index + 1).padStart(2, '0')}`,
+            number: `ТЕСТ-${String(index + 1).padStart(3, '0')}`,
+            desc: `${descriptions[index % descriptions.length]} ${index + 1}`,
+            manager: managers[index % managers.length],
+            dateDo: `${today.getFullYear()}-${month}-${day}`,
+            dateGot: `${today.getFullYear()}-${month}-${String(Math.min(28, Number(day) + 2)).padStart(2, '0')}`,
+            status: '', stageStatuses: {}, positions: {},
+            svarka: { svarshik: WELDERS[0] },
+            pokraska: null, piskostruy: null, gibka: null, sborka: null
+        };
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([...orders, ...testOrders]));
+}
+
+seedTestWeldingOrders();
+const store = new Store(STORAGE_KEY);
+const renderer = new Renderer(store);
+const modal = new Modal(store, renderer);
+renderer.onOpenOrder = order => modal.openEdit(order);
+initSectionOrder();
+initTabs();
+renderer.renderAll();
+
+
+</script>
+</body>
+</html>
